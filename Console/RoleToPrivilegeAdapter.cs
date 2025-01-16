@@ -31,7 +31,7 @@ namespace dbapp.Console
 
 		public async Task Create()
 		{
-			await m_storage.AddRoleToPrivilegeAsync(GetEntity());
+			await m_storage.AddRoleToPrivilegeAsync(await GetEntity());
 		}
 
 		public async Task Delete(int id)
@@ -47,16 +47,31 @@ namespace dbapp.Console
 				System.Console.WriteLine("Entity not found");
 				return;
 			}
+
 			System.Console.WriteLine("Enter new data:");
-			await m_storage.UpdateRoleToPrivilegeAsync(GetEntity(ent));
+			await m_storage.UpdateRoleToPrivilegeAsync(await GetEntity(ent));
 		}
 
-		private RoleToPrivilege GetEntity(RoleToPrivilege? prevEntity = null)
+		private async Task<RoleToPrivilege> GetEntity(RoleToPrivilege? prevEntity = null)
 		{
 			System.Console.WriteLine("Enter RoleId");
 			int roleId = int.Parse(System.Console.ReadLine());
 			System.Console.WriteLine("Enter PrivilegeId");
 			int privilegeId = int.Parse(System.Console.ReadLine());
+
+			var privilege = await m_storage.GetPrivilegeAsync(privilegeId);
+			var role = await m_storage.GetRoleAsync(roleId);
+
+			while (privilege == null || role == null)
+			{
+				System.Console.WriteLine("Foreign entities not found!");
+				System.Console.WriteLine("Enter UserId");
+				privilegeId = int.Parse(System.Console.ReadLine());
+				System.Console.WriteLine("Enter RoleId");
+				roleId = int.Parse(System.Console.ReadLine());
+				privilege = await m_storage.GetPrivilegeAsync(privilegeId);
+				role = await m_storage.GetRoleAsync(roleId);
+			}
 
 			if (prevEntity == null)
 			{

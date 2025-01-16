@@ -2,7 +2,7 @@
 
 namespace dbapp.Console
 {
-	public class UserToRoleAdapter
+	public class UserToRoleAdapter : IConsoleAdapter
 	{
 		public string TableName => "UserToRole";
 
@@ -31,7 +31,7 @@ namespace dbapp.Console
 
 		public async Task Create()
 		{
-			await m_storage.AddUserToRoleAsync(GetEntity());
+			await m_storage.AddUserToRoleAsync(await GetEntity());
 		}
 
 		public async Task Delete(int id)
@@ -49,15 +49,29 @@ namespace dbapp.Console
 			}
 
 			System.Console.WriteLine("Enter new data:");
-			await m_storage.UpdateUserToRoleAsync(GetEntity(ent));
+			await m_storage.UpdateUserToRoleAsync(await GetEntity(ent));
 		}
 
-		private UserToRole GetEntity(UserToRole? prevEntity = null)
+		private async Task<UserToRole> GetEntity(UserToRole? prevEntity = null)
 		{
 			System.Console.WriteLine("Enter UserId");
-			int roleId = int.Parse(System.Console.ReadLine());
-			System.Console.WriteLine("Enter RoleId");
 			int userId = int.Parse(System.Console.ReadLine());
+			System.Console.WriteLine("Enter RoleId");
+			int roleId = int.Parse(System.Console.ReadLine());
+
+			var role = await m_storage.GetRoleAsync(roleId);
+			var user = await m_storage.GetUserAsync(userId);
+
+			while (role == null || user == null)
+			{
+				System.Console.WriteLine("Foreign entities not found!");
+				System.Console.WriteLine("Enter UserId");
+				roleId = int.Parse(System.Console.ReadLine());
+				System.Console.WriteLine("Enter RoleId");
+				userId = int.Parse(System.Console.ReadLine());
+				role = await m_storage.GetRoleAsync(roleId);
+				user = await m_storage.GetUserAsync(userId);
+			}
 
 			if (prevEntity == null)
 			{

@@ -6,11 +6,10 @@ namespace dbapp.Models
 	{
 		public TablesContext()
 		{
-		//	Database.EnsureDeleted();
+			//Database.EnsureDeleted();
 			Database.EnsureCreated();
 		}
 
-		public DbSet<Table> Tables { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<Role> Roles { get; set; }
 		public DbSet<Privilege> Privileges { get; set; }
@@ -21,6 +20,7 @@ namespace dbapp.Models
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=TablesDB;");
+			optionsBuilder.EnableSensitiveDataLogging();
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

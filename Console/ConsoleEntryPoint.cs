@@ -12,6 +12,10 @@ namespace dbapp.Console
 		{
 			m_consoleAdapters.Add(new UserConsoleAdapter(storage));
 			m_consoleAdapters.Add(new RoleConsoleAdapter(storage));
+			m_consoleAdapters.Add(new PrivilegeConsoleAdapter(storage));
+			m_consoleAdapters.Add(new UserToRoleAdapter(storage));
+			m_consoleAdapters.Add(new RoleToPrivilegeAdapter(storage));
+			m_consoleAdapters.Add(new UserToPrivilegeAdapter(storage));
 		}
 
 		public async Task Start()
